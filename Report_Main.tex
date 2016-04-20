@@ -1,0 +1,96 @@
+\documentclass[a4paper,12pt,twoside]{article}
+
+% ----- Header ----- %
+\title{FPGA Development for the LHCb Vertex Locator Upgrade}
+\author
+{
+	Nicholas Mead\\
+	Student Number: 8064141\\
+	School of Physics and Astronomy\\
+	University of Manchester
+}
+\date{\today}
+
+% ----- Packages ----- %
+\usepackage[left=1in,right=1in,bottom=1.25in,top=1in]{geometry}
+\usepackage{amsmath}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\usepackage{graphicx}
+\graphicspath{{Figures/}}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{enumerate}
+\usepackage[ampersand]{easylist}
+\usepackage{lineno}
+\usepackage[backend=biber,sorting=none]{biblatex}
+\addbibresource{Report_Main.bib}
+\usepackage{placeins}
+\let\Oldsection\section
+\renewcommand{\section}{\FloatBarrier\Oldsection}
+\let\Oldsubsection\subsection
+\renewcommand{\subsection}{\FloatBarrier\Oldsubsection}
+\let\Oldsubsubsection\subsubsection
+\renewcommand{\subsubsection}{\FloatBarrier\Oldsubsubsection}
+\usepackage{hhline} %double line for table
+\usepackage{arydshln}
+\let\hdash\hdashline
+\usepackage[thinlines]{easytable}
+\usepackage[font=footnotesize,labelfont=bf]{caption} %figure captions
+\usepackage{sidecap} %side captions
+\sidecaptionvpos{figure}{c}
+
+% ----- Settings ----- %	
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+% ----- Main ----- %
+\begin{document}
+
+	% ----- Document Head ----- %
+	\begin{titlepage}
+		\clearpage
+		\maketitle \thispagestyle{empty}
+		\vspace{1em}
+		\input{Abstract}
+
+		\newpage \thispagestyle{empty}
+		\cleardoublepage  
+		\footnotesize{\tableofcontents} 
+		\thispagestyle{empty}	
+	
+	\end{titlepage}
+
+	% ----- Line Numbers for ease when writing ----- %
+	% (comment out or remove for final draft) %
+	% \linenumbers
+	% \modulolinenumbers[2]
+
+	% ----- Main Document ----- %
+
+	\setcounter{page}{1}
+
+	\input{Introduction}
+
+	\input{Scrambling_Algorithms}
+
+	\input{Event_Isolation_Flaging}
+
+	\input{Future_Development}
+
+	%\input{Other/Conclusion}
+
+	% ----- Acknowledgements & Bibliography ----- %
+	\input{Acknowledgements}
+
+	\newpage 
+	\addcontentsline{toc}{section}{References}
+	\printbibliography
+
+	% \newpage
+	% \appendix
+	% \section{Appendix}
+	% \input{Appendix}
+
+\end{document}

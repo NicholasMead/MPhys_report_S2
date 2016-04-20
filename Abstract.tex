@@ -1,0 +1,13 @@
+\begin{abstract}
+	\hspace{-2em}
+	This document discusses two areas of FPGA development for the LHCb VELO upgrade scheduled to coincide with LHC Long Shutdown 2 in 2019.
+	The areas of development are the selection of a suitable scrambling algorithum and the continued work on the event isolation flagging.
+	\\ \\
+	The analaysis for three scrambling algorithms, required for data transfer from the front end elctronics to the Data Aquisition FPGA, was compared against the theoretical predictions of scrambled data.
+	It was found that the currently implemented VeloPix scrambler is the optimum of the choices but also that an alternative multiplicative scrambler was suitable for computer simulations.
+	\\ \\
+	Event Isolations Flaging (EIF) system is intended to identify and flag the easier to re-construct events in order to reduce event pile-up in the computer network.
+	Despite a bug being identified in the simulated data, the VHDL development is ongoing.
+	A bubble sorting algorithum, implemented by the EIF system, is ready for testing.
+	Once the EIF system is complete, it will be implemented in the master code for the low level interface.
+\end{abstract}

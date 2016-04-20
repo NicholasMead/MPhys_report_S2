@@ -1,0 +1,41 @@
+* questions for marco [6/6]
+** DONE Equations, with or without punctuation?
+definatly punctuated, always.
+** DONE Data of draft confurmation?
+be the weekend, this week.
+** DONE Can I write the scramlber section with a 'convient' time scale, i.e. velopix scrambler is the proposed replactment for additive but we are also concidering an alternative?
+
+just state the current situation, not at historical account.
+** DONE Does the title, contence and bibliography count in the page count?
+not a scrict limit but good reason for writing more\ less. give good account of project.
+make sure everything is needed, dont be bulkly, use apendics if needed.
+** DONE Line numbers?
+DEFINATLY NOT FOR FINAL - but yes for drafts
+** DONE software referances
+looks for manual or how the companies want to be cited.
+
+* Report Sctions [2/6]                                                      
+** TODO Abstract
+** DONE Get the template                                                        
+** TODO Write Introduction [1/5]                                                
+*** DONE Sandard Model
+*** DONE LHCb Experiment
+*** TODO LHCb upgrade
+*** TODO VELO upgrade                                                      
+*** TODO DAQ chain (VeloPix - OPB - PCIe40)                                     
+*** TODO MiniDAQ description                                                    
+** TODO Write Scrambler section [3/6]                                           
+*** DONE Description                                                            
+**** TODO Motivation for the new scrambler                                       
+*** TODO theoretical predictions
+*** DONE Xchecks                                                                
+*** DONE Simulation						    :revisit:
+*** TODO Performance                                                            
+*** TODO Conclusions                                                            
+** TODO Write Clustering tagging section [0/5]                                  
+*** TODO Description                                                            
+*** TODO Simulation                                                             
+*** TODO Xchecks                                                                
+*** TODO Compilation                                                            
+*** TODO Conclusions                                                            
+** TODO Summary  
