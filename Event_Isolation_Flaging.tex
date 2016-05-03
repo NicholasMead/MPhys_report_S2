@@ -1,0 +1,131 @@
+\section{Event Isolation Flagging}
+	
+	One challenge of increasing the readout speed of the detector is processing the data that is produced.
+	Because of this, any pre-computer data processing that is possible reduces the load and processing time of the computer system.
+	One area where the DAQ's FPGA will be used for this purpose is in \underline{E}vent \underline{I}solation \underline{F}lagging (EIF).
+	\par
+	Particles traversing the VELO have a probability that they will pass though the boundary of two or more Super Pixels.
+	This will cause multiple SPPs to be created for the same particle path.
+	As such, the reconstruction of the particle's path is a more complicated process than a particle path that only interects with one SP.
+	\par
+	The aim of EIF is to identify the SPPs that completly describe the paticles interaction with the module and flag that event as isolated.
+	These flagged events will allow the computer systems to prioritize these easier to reconstruct paths.
+	This reduces event pile up the computer network.
+
+	\subsection{Time Sorting Data}
+
+		Frames arriving the DAQ from the GWT are not time ordered.
+		When fully implimented, the LLI will have time sorted the data before the EIF.
+		However, the provided simulated data of the VELO not time ordered.
+		\par
+		In order to test any EIF development, it is necessary to time order the simulation data.
+		This was done using a python script that sorted the SPPs into lists according to BCID.
+		The script has three main phases:
+
+		\begin{easylist}
+			& Read in a SPP and retrieve BCID.
+			& Add the SPP to the correct list according to BCID.
+			& Print the list of opposite BCID (i.e. input SPP's BCID + 124, accounting for BCID 256 rolling over to 0) to file.
+			& Print the list of opposite BCID to file. (The opposite BCID is the BCID 124 away from the BCID read in, taking the result modulo 256.)
+		\end{easylist}
+
+		As not all BCID's were present, measures were put in place to ensure all BCID lists were outputed in time order, preventing lists containing SPPs from two or more bunch crosses. The time order of the data was tested and confirmed as correct.
+		% \par
+		% One advantage of this process is that, regardless of the number of isolated events, the data no longer needs to be sorted by the computer network.
+		% This further reduced the computational load on the computers.
+
+		\subsection{Bubble Sorting}
+
+		Bubble sorting is the process of sequentially comparing adjacent elements of a list and swapping the element if necessary.
+		For example, if sorting into acsending order and comparing the value 5 and 3, a swap would be needed.
+		However, comparing 3 and 5 in the same example would not need a swap.
+		When sorting an arbitrary list, we can define an `even-odd' comparison as one comparing an even placed element with an odd one (i.e. element 4 with element 5).
+		An `odd-even' comparison is the logic opposite (i.e. element 5 with element 6).
+		\par
+		The first step in EIF is to sort all the SPP's that correspond to the same bunch crossing (Henceforth referred to as a \textit{`data train'}) by their row in the ASIC.
+		\par
+		Bubble sorting, when implemented in series processing, is a relatively slow sorting algorithm.
+		At worst case, Bubble sorting requires $n^2$ iterations to complete the sort of a list of size $n$.
+		However, FPGAs can easily parallel proccess.
+		By making $\frac{n}{2}$ comparisons simultaniously (all even-odd or odd-even pairs), FPGA Bubble Sorting in the worst case scenario only requires $n$ iterations. This is made clear in Figure~\ref{fig:sorting}.
+
+		\begin{figure}[ht]
+			\centering
+			\includegraphics[width=0.7\textwidth]{sorting_diagram}
+			\caption{A diagram showing Bubble Sorting in an FPGA.}
+			\label{fig:sorting}
+		\end{figure}
+
+	\subsection{Isolation Checking}
+
+		Once the data train is sorted by row, each SPP in the train can be compared against its adjacent SPP's.
+		If the SPP is separated by more than 1 row to both adjacent SPP's, the event is isolated.
+		The SPP is then stored as a 31 bit SPP, with the new bit added as the least significant bit (shifting the original SPP 1 bit in significance), with the new bit signalling 1 for isolated and 0 for non-isolated. 
+
+	\subsection{Data Train Overflow} % (fold)
+	\label{sub:data_train_overflow}
+		
+		One limitation of EIF in an FPGA is the limitation on resources. 
+		The logic systems are static in design and, as such, there is a natural need for a cap on the size of the data train that the EIF system can accept - specifically for the bubble sorting.
+		Because of this limitation, the EIF system is required to implement an overflow system that will reject data trains above a pre-determined limit, and move them to the next step of the LLI without proccessing them.
+		This system is also required to bypass data if a data train arrives at the EIF system before the previous train has been processed - preventing pile-up.
+		\par
+		In order to investigate the limit needed for the overflow, the distribution of data train sizes was investigated. For each ASIC, a graph similar to those in Figure~\ref{fig:asic_datatrain} can be created.
+
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=\textwidth]{asic_datatrain_length}
+			\caption{The data train length distribution of 4 ASIC chips.}
+			\label{fig:asic_datatrain}
+		\end{figure}
+		\par
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.7\textwidth]{overflow_graph.pdf}
+			\caption{fraction of overflow data trains for four overflow limits.}
+			\label{fig:overflow_franction}
+		\end{figure}\FloatBarrier
+		More important, however, is the fraction of data trains over the bypass limit.
+		For four hypothetical limits, the fraction of overflow data trains was calculated from the VELO simulated data, and is shown in Figure~\ref{fig:overflow_franction}.
+		This analysis, however, raises questions beyond that of the overflow limit.
+		The ASICs below 100 show no simulatity to those above 100.
+
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.49\textwidth]{Mean_ASIC_Graph_Chip}
+			\includegraphics[width=0.49\textwidth]{Mean_ASIC_Graph_Chip_lower_values}
+			\caption{The mean data train length for each ASIC, coloured by the chip number.}
+			\label{fig:asic_structure}
+		\end{figure}\FloatBarrier
+		Further investigations as to the structure of the simulated data is shown in Figure~\ref{fig:asic_structure}.
+		Here the data is partitioned by the position of the ASIC chip in the module.
+		From this we learn that large variance in the data (ASIC number $>$ 100) is due to the ASICs position on the module.
+		This result is expected as the ASICs closer to the beam line will detect more particle paths.
+		However, this structure is not consistaent across the ASIC's pre and post 100.
+		It can be concuded that the simulated data contains a \textit{`bug'}.
+		This \textit{`bug'} is now being reviewed by the creators of the simulation. 
+		No further analysis can be continued on setting an overflow limit until this \textit{`bug'} has been properly investigated.
+
+		% subsection data_train_overflowa (end)
+
+	\subsection{Current Stage of Development} 
+		The EIF system is still currently in active VHDL development.
+		The current developmental code is still in a stand alone format and not intergrated with the master LLI code.
+		Currently created and ready for stand alone testing, is a bubble sorting module with data in and out systems.
+		The module consists of a top level control entity and a comparison/swap sorting entity.
+		The control entity forms a feedback loop passing the ouput of the sorting enity back into its input at each step.
+		At each step, the parity of comparison is changed (i.e. odd-even to even-odd).
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.65\textwidth]{bubblesort_modual}
+			\caption{Data from for the developmental bubble sorting module.}
+			\label{fig:bubble_data_flow}
+		\end{figure} \FloatBarrier
+		\par
+		This process continues until the input and output of the sorting module is identical for two subsequent steps.
+		At this point the data is sorted and passed to the output.
+		The data flow is more simply demonstrated in Figure~\ref{fig:bubble_data_flow}.
+		\par
+		Once testing of the bubble sorting is complete and the simulated data bug is fixed, the EIF will be expanded to include Isolation Flagging and an overflow, as discussed.
+		Once the stand alone system is complete, it will be intergrated into the LLI master code and modified to comply with the LLI data management systems.
+		\FloatBarrier
