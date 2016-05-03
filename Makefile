@@ -1,5 +1,5 @@
 MainFile = Report_Main
-Target = MPhys_Semester1_Report.pdf
+Target = MPhys_Semester2_Report.pdf
 
 all: $(MainFile).tex
 	make available; make pdf; make clean; make rename
