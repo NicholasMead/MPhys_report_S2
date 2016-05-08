@@ -1,40 +1,55 @@
 \section{Event Isolation Flagging}
 	
 	One challenge of increasing the readout speed of the detector is processing the data that is produced.
-	Because of this, any pre-computer data processing that is possible reduces the load and processing time of the computer system.
+	Because of this, any pre-processor functions exectuted in the FPGA reduces the load and processing time of the computer system.
 	One area where the DAQ's FPGA will be used for this purpose is in \underline{E}vent \underline{I}solation \underline{F}lagging (EIF).
 	\par
-	Particles traversing the VELO have a probability that they will pass though the boundary of two or more Super Pixels.
+	When particless traverse the VELO its possible that they will pass though the boundary of two or more Super Pixels.
 	This will cause multiple SPPs to be created for the same particle path.
-	As such, the reconstruction of the particle's path is a more complicated process than a particle path that only interects with one SP.
+	For such paths, the computer is required to seach all SPP corresponding to the event, and identify SPP's that relate the the same particle track.
 	\par
 	The aim of EIF is to identify the SPPs that completly describe the paticles interaction with the module and flag that event as isolated.
-	These flagged events will allow the computer systems to prioritize these easier to reconstruct paths.
-	This reduces event pile up the computer network.
+	The computer can then save time by negating the need to seach for adjesent SPP's.
+	By speeding up to the proccesing of such tracks, the pile-up of data is reduced.
+	This thus reduced the probublity of the computer needing to reject incomming data or for the detector to stop collecting data.
 
-	\subsection{Time Sorting Data}
+	\subsection{Top Level Processing} % (fold)
+	\label{sub:top_level_processing}
+	
+		The EIF data processing comprises of two main steps.
 
-		Frames arriving the DAQ from the GWT are not time ordered.
-		When fully implimented, the LLI will have time sorted the data before the EIF.
-		However, the provided simulated data of the VELO not time ordered.
-		\par
-		In order to test any EIF development, it is necessary to time order the simulation data.
-		This was done using a python script that sorted the SPPs into lists according to BCID.
-		The script has three main phases:
+		\begin{itemize}
+			\item Bubblesort the SPP's by row ID.
+			\item Compair SPP row ID adjesent SPP's and compute if isolated. 
+		\end{itemize}
 
-		\begin{easylist}
-			& Read in a SPP and retrieve BCID.
-			& Add the SPP to the correct list according to BCID.
-			& Print the list of opposite BCID (i.e. input SPP's BCID + 124, accounting for BCID 256 rolling over to 0) to file.
-			& Print the list of opposite BCID to file. (The opposite BCID is the BCID 124 away from the BCID read in, taking the result modulo 256.)
-		\end{easylist}
+		One of the major, solid constraits of the data processing is the max number of SPP's that the Bubblesort can accept.
+		
 
-		As not all BCID's were present, measures were put in place to ensure all BCID lists were outputed in time order, preventing lists containing SPPs from two or more bunch crosses. The time order of the data was tested and confirmed as correct.
-		% \par
-		% One advantage of this process is that, regardless of the number of isolated events, the data no longer needs to be sorted by the computer network.
-		% This further reduced the computational load on the computers.
+	% subsection top_level_processing (end)
 
-		\subsection{Bubble Sorting}
+	% \subsection{Time Sorted Test Dataset}
+	% 	Frames arriving the DAQ from the GWT are not time ordered.
+	% 	Inside the DAQ the router will have time sorted the data before the EIF.
+	% 	However, the Prior simulated data of the VELO is not time ordered.
+	% 	\par
+	% 	In order to test any EIF development, it is necessary to time order the simulation data.
+	% 	This was done using a python script that sorted the SPPs into lists according to BCID.
+	% 	The script has three main phases:
+
+	% 	\begin{easylist}
+	% 		& Read in a SPP and retrieve BCID.
+	% 		& Add the SPP to the correct list according to BCID.
+	% 		& Print the list of opposite BCID (i.e. input SPP's BCID + 124, accounting for BCID 256 rolling over to 0) to file.
+	% 		& Print the list of opposite BCID to file. (The opposite BCID is the BCID 124 away from the BCID read in, taking the result modulo 256.)
+	% 	\end{easylist}
+
+	% 	As not all BCID's were present, measures were put in place to ensure all BCID lists were outputed in time order, preventing lists containing SPPs from two or more bunch crosses. The time order of the data was tested and confirmed as correct.
+	% 	% \par
+	% 	% One advantage of this process is that, regardless of the number of isolated events, the data no longer needs to be sorted by the computer network.
+	% 	% This further reduced the computational load on the computers.
+
+	\subsection{Bubble Sorting}
 
 		Bubble sorting is the process of sequentially comparing adjacent elements of a list and swapping the element if necessary.
 		For example, if sorting into acsending order and comparing the value 5 and 3, a swap would be needed.
