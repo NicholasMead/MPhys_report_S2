@@ -1,30 +1,43 @@
 \section{Event Isolation Flagging}
 	
 	One challenge of increasing the readout speed of the detector is processing the data that is produced.
-	Because of this, any pre-processor functions exectuted in the FPGA reduces the load and processing time of the computer system.
+	Because of this, any pre-processor functions executed in the FPGA reduces the load and processing time of the computer system.
 	One area where the DAQ's FPGA will be used for this purpose is in \underline{E}vent \underline{I}solation \underline{F}lagging (EIF).
 	\par
-	When particless traverse the VELO its possible that they will pass though the boundary of two or more Super Pixels.
+	When particles traverse the VELO there is a finite probability that they will pass though the boundary of two or more Super Pixels.
 	This will cause multiple SPPs to be created for the same particle path.
-	For such paths, the computer is required to seach all SPP corresponding to the event, and identify SPP's that relate the the same particle track.
+	For such paths, the computer is required to search all SPP corresponding to the event, and identify SPP's that relate the the same particle track. However, as the computer doesn't have information on which SPP's do and do not have adjacent SPP's, the computer is required to search for neighboring SPP's for each SPP in the BCID. This is an inefficiency which can be solved withing the FPGA, before the computer processes the data.
 	\par
-	The aim of EIF is to identify the SPPs that completly describe the paticles interaction with the module and flag that event as isolated.
-	The computer can then save time by negating the need to seach for adjesent SPP's.
-	By speeding up to the proccesing of such tracks, the pile-up of data is reduced.
-	This thus reduced the probublity of the computer needing to reject incomming data or for the detector to stop collecting data.
+	The aim of EIF is to identify the SPPs that completely describe the particles interaction with the module and flag such SPP's as isolated.
+	The computer can then save time by negating the need to search for adjacent SPP's.
+	By speeding up to the processing of such tracks, the pile-up of data is reduced.
+	This thus reduces the probability of the computer needing to reject incoming data or for the detector to stop collecting data.
 
-	\subsection{Top Level Processing} % (fold)
+	\subsection{Module} % (fold)
 	\label{sub:top_level_processing}
 	
 		The EIF data processing comprises of two main steps.
 
 		\begin{itemize}
-			\item Bubblesort the SPP's by row ID.
-			\item Compair SPP row ID adjesent SPP's and compute if isolated. 
+			\item Bubble sort the SPP's by row ID.
+			\item Compare SPP row ID adjacent SPP's and compute if isolated. 
 		\end{itemize}
 
-		One of the major, solid constraits of the data processing is the max number of SPP's that the Bubblesort can accept.
-		
+		One of the major constraints of the data processing is the max number of SPP's that the Bubble sort can accept.
+		It is therefore necessary to include in a bypass system to the process that allows BCID's with too many SPP's to be passed onto the next stage without being processed.
+		Such BCID's will be processed in the same way for the rest of the FPGA and CPU processes, but will not benefit from the time saving property of the EIF.
+
+		As such the top level entity contains three child entities.
+
+		\begin{description}
+			\item[Active Controller] \hfill \\
+				This entity reads in the BCID's to an array of data processors and writes the results to the output ram.
+			\item[Interface FIFO] \hfill \\
+				This \underline{F}irst \underline{I}n \underline{F}irst \underline{O}ut entity is written to by the Active Controller and is used to inform the Bypass Controller of which BCID's have and have not been bypassed.
+			\item[Bypass Controller] \hfill \\
+				As implied by the name, this entity passing data across the EIF system without data processing.
+
+		\end{description}
 
 	% subsection top_level_processing (end)
 
