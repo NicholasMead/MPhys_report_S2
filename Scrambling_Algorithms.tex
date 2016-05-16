@@ -3,7 +3,7 @@
 
 	Due to radiation levels inside the detector chamber, the main data processing takes place in a concrete bunker away from the detector.
 	To facilitate this, 20 optical links (per module) are used to transfer the data from the front end VELO to the DAQ FPGA.
-	When communicating data digitaly, the transferring module (TX) and the recieving module (RX) must have synchronised clocks.
+	When communicating data digitally, the transferring module (TX) and the receiving module (RX) must have synchronised clocks.
 	In this case, the GWT serialiser is the TX, and the DAQ is the RX.
 	When achieving a synchronised clock, there are two main approaches:
 
@@ -11,7 +11,7 @@
 		\ListProperties(Numbers=R,Margin=0.5cm,Align=fixed,FinalSpace=2em)
 		% & Syncinize both the TX and RX from a single central clock - used in I$^2$C communication.
 		& Transmit the TX clock with the data to the RX module - used in I$^2$C and SPI communication.
-		& Use bit-changes in the data to continuously synchronise the RX clock.
+		& Use bit-changes in the data to continuously synchronised the RX clock.
 	\end{easylist}
 
 	The former of these options, although widely used in conventional electronics, requires a finely tuned clock accounting for all possible delays.
@@ -19,12 +19,12 @@
 	Because delays in the data are possible, the latter option has been selected.
 
 	As mentioned, it is necessary to ensure that the data has a large density of transitions before being transmitted from the front-end detector to the DAQ module.
-	However, as the majority of super pixel hitmaps are empty, the data has a bias towards \textit{`0'}s.
+	However, as the majority of super pixel hit maps are empty, the data has a bias towards \textit{`0'}s.
 	This reduces the frequency of transitions in the data - increasing the probability of a desynchronisation event.
-	It is therefore necessary to scramble the data prior to transmition and descramble the data in the LLI of the DAQ FPGA.
+	It is therefore necessary to scramble the data prior to transmission and descramble the data in the LLI of the DAQ FPGA.
 	\par
 	Scrambling and later descrambling the data is not a trivial exercise.
-	The scrambleing (TX) module and descrambling (RX) module must use a sychronised \textit{`key'}, that is used in both the scrambling and descrambling processes.
+	The scrambling (TX) module and descrambling (RX) module must use a synchronised \textit{`key'}, that is used in both the scrambling and descrambling processes.
 	In the FPGA, the \textit{`key'} is derived from the previous states of the data.
 	There are two methods investigated for generating this \textit{`key'}:
 
@@ -44,7 +44,7 @@
 				As the name implies, this scrambler used additive key generation which is dependent on all previous input frames since the last reset signal.
 
 			\item[Intermediate Scrambler] \hfill \\
-				Created by Karol Hennessy, and deriving its name arbitrarily from the order of consideration, this multiplicative scramber combines the current and previous frames to generate the \textit{`key'}.
+				Created by Karol Hennessy, and deriving its name arbitrarily from the order of consideration, this multiplicative scrambler combines the current and previous frames to generate the \textit{`key'}.
 				Therefore, in the event of desynchronisation, only two frames are lost before the \textit{`key'} is automatically recovered.
 				This feature alone is a significant improvement over the Additive Scrambler.
 
@@ -65,9 +65,9 @@
 		Furthermore, a C++ simulation was created for the three scramblers.
 		This simulation had two main purposes;
 		firstly to cross check the output of the C++ against the Modelsim simulations;
-		secondly to simulate the scrambler over a much larger sample of data as Modelsim simulations are less time effecient.
+		secondly to simulate the scrambler over a much larger sample of data as Modelsim simulations are less time efficient.
 		In addition to the cross checks, the C++ code allowed for the injection of a desychrnonisation event, in which the \textit{`key'} is lost.
-		As expected, the Additive Scrambler was unable to recover any data post desychrnonisation, however the intermediate and VeloPix scarmblers both recovered the \textit{`key'} after two frames and continued to decode data.
+		As expected, the Additive Scrambler was unable to recover any data post desychrnonisation, however the intermediate and VeloPix scramblers both recovered the \textit{`key'} after two frames and continued to decode data.
 
 	% subsection cross_checks (end)
 
@@ -85,16 +85,16 @@
 		and macroscopic quantities can be calculated by averaging a large number of frames.
 		For the analysis outlined in section \ref{subsub:messurements_of_the_algorithms}, predictions will be made using these principles and outlined in section \ref{subsub:statistical_predictions}.
 		\par
-		In the context of the statisical model, it is reasonable to consider the degree of \textit{`scrambled-ness'} analogous to entropy.	
-		This analogy is not disimilar to the common interpretation of entropy as a measure of disorder. 
-		From Boltzman's equation for entropy,
+		In the context of the statistical model, it is reasonable to consider the degree of \textit{`scrambled-ness'} analogous to entropy.	
+		This analogy is not dissimilar to the common interpretation of entropy as a measure of disorder. 
+		From Boltzmann's equation for entropy,
 
 		\begin{equation}
 			S \propto ln(\Omega)
 			\label{eqn:boltzman}
 		\end{equation}
 
-		where $\Omega$ is the number of microstates assosiated with the macrostate, we learn that this state of maximum entropy is a macrostate with the maximum number of assosiated microstates.
+		where $\Omega$ is the number of microstates associated with the macrostate, we learn that this state of maximum entropy is a macrostate with the maximum number of associated microstates.
 		\par
 		The entropic argument of Equation~\ref{eqn:boltzman} is not only mathematically founded. 
 		For a scramble algorithm to hold for all possible data sets, it must also be capable of outputting all possible permutations. 
@@ -112,7 +112,7 @@
 					This is an important test as one of the roles of the scrambler is to maximise the number of transitions.
 
 				\item[Common Bit Chain Length] \hfill \\
-					One of the downfalls of the `Number of Transitions Per Frame' analysis is that the two hypethetical 20 bit frames,
+					One of the downfalls of the `Number of Transitions Per Frame' analysis is that the two hypothetical 20 bit frames,
 
 					\begin{enumerate}[a)]
 						\item \textsc{10101010101111111111},
@@ -123,8 +123,8 @@
 					It is therefore also necessary to evaluate the length of common bit chains within the scrambled data as shorter chains are more suitable for data transfer.
 
 				\item[Bit Asymmetry] \hfill \\
-					Pre-scramble, the data had a large bais towards \textit{`0'}s due to the majority of the hitmaps being empty.
-					Scrambled data, via entropic arguments, \textit{should} show zero bias eitherway.
+					Pre-scramble, the data had a large bias towards \textit{`0'}s due to the majority of the hit maps being empty.
+					Scrambled data, via entropic arguments, \textit{should} show zero bias either way.
 					Therefore, by investigating how the number of \textit{`1'}s - \textit{`0'}s evolves over many frames, any bias in the scrambler can be found.
 
 			\end{description}	
@@ -147,9 +147,9 @@
 						p_{i \to j}(t) = 0.5 \quad : \quad i,j = [0\ 1], \quad \forall\ t \in \mathbb{N}.
 					\end{equation}
 
-					However, assuming zero bias and detailed balance, as $p_{1 \to 0}(t)$ is equal in both probability and importance to $p_{0 \to 1}(t)$, the probability of a bit change shall henceforth be refered to as $p_{\tau}(t)$.
+					However, assuming zero bias and detailed balance, as $p_{1 \to 0}(t)$ is equal in both probability and importance to $p_{0 \to 1}(t)$, the probability of a bit change shall henceforth be refereed to as $p_{\tau}(t)$.
 					\par
-					Over an $n$ step process, analogous to an $n$ bit frame, the probalility distribution of the number of transitions $N_\tau$ is given by Binomial statistics,
+					Over an $n$ step process, analogous to an $n$ bit frame, the probability distribution of the number of transitions $N_\tau$ is given by Binomial statistics,
 
 					\begin{equation}
 						f(N_{\tau}) = \frac{n!}{N_{\tau}!(n-N_{\tau})!}\ p^{N_{\tau}}\ (1 - p)^{n-N_{\tau}}
@@ -318,9 +318,9 @@
 
 			The results from the \textit{`Number of Transitions Per Frame'} analysis, shown in Figure~\ref{fig:transitions_per_frame}, show a strong similarity between the Intermediate and VeloPix Scramblers with the randomly generated data. 
 			These results are within 1\% agreement with the theoretical predictions for $<N_\tau> = 60$ and $\sigma_{N_\tau} = 5.48$, made in Section~\ref{subsub:statistical_predictions}. 
-			The remarkable consistancy between the theoretical predictions and the randomly generated data provides confidence in both the theory, and the scrambled nature of the Intermediate and VeloPix scrambler outputs.
+			The remarkable consistency between the theoretical predictions and the randomly generated data provides confidence in both the theory, and the scrambled nature of the Intermediate and VeloPix scrambler outputs.
 			\par
-			For the \textit{`Common Bit Chain Length'} analysis all three scramblers; the random data, and the theoretical predictions are consistant to within 1\%. 
+			For the \textit{`Common Bit Chain Length'} analysis all three scramblers; the random data, and the theoretical predictions are consistent to within 1\%. 
 			Comparing the results for the Additive Scrambler, it is shown that while the frequency of longer chains is consistent with random data, the variance of transitions is larger than predicted. 
 			Thus, the long and short trains are more locally clustered. 
 			\par
@@ -363,7 +363,7 @@
  		As such, it is not suitable for implementation as it does not meet the addition requirements of the ASIC.		
  		\par		
  		The VeloPix Scrambler, like the Intermediate Scrambler, produces a statistically scrambled output.		
- 		Furthermore, the algorithm is inline with the additional requirments of the ASIC.		
+ 		Furthermore, the algorithm is in line with the additional requirements of the ASIC.		
  		As such, it is ideal for implementation, and hence is currently the choice algorithm for use in the 2019 VELO upgrade.
 
 
