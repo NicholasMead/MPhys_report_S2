@@ -18,14 +18,14 @@
 
 		Retrieving and delivering BCID information withing the FPGA is a challenge in its self.
 		In the router data is not processed in BCID order, instead information from many BCID's are processed simultaneously.
-		Adding complication, the EIF-MEP interface but identically match that of the Router-IEF.
+		Adding complication, the EIF-MEP interface must identically match that of the Router-IEF.
 		This is because the IEF module is not a priority for implementation in the final production for the DAQ FPGA.
 		Thus, the IEF module must be easily removable without the need for a significant re-design.
 
 		The decision was made to implement swinging buffers between the Router-EIF and EIF-MEP interfaces.
-		Each swinging buffer consists of two sets of 16 RAMs, each containing the SPPs of 32 BCIDs and an additional count ram, when contains the number of SPPs in each BCID.
+		Each swinging buffer consists of two sets of 16 RAMs, each containing the SPPs of 32 BCIDs and an additional count ram, that contains the number of SPPs in each BCID.
 		During one swing cycle, one of the interfacing modules can write information to one set of RAMs in the buffer while the second module reads from the second set of Rams.
-		This approach has two main benefits: firstly there can be no read-write conflicts where the EIF or MEP read data from a BCID before writing is complete; secondly the calculation deciding is a BCID can be processed before being overwritten is significantly simplified.
+		This approach has two main benefits: firstly there can be no read-write conflicts where the EIF or MEP read data from a BCID before writing is complete; secondly the calculation deciding if a BCID can be processed before being overwritten is significantly simplified.
 		In addition, the swinging buffer allows for the parallelization of EIF modules.
 		This reduces the load on each EIF unit and prevents the BCIDs from being bypassed due to lack of processing time.
 
@@ -48,10 +48,10 @@
 			\end{description}
 
 			On the falling edge of the clock (clk), if the wr\textunderscore en or rd\textunderscore en signals are high, the RAM will write the wr\textunderscore data signal to the specified address or output the data stored in the address to the rd\textunderscore data signal respectively. 
-			The count RAM (ct) is the only exception as it count not have a read enable.
+			The count RAM (ct) is the only exception as it does not have a read enable.
 			Instead the count RAM will update the data signal every falling edge to whatever address the ct\textunderscore addr signal specifies.
 
-			The RAMs used in the FPGA do not have a large enough output bandwidth to output the hole of a BCID in one address.
+			The RAMs used in the FPGA do not have a large enough output bandwidth to output the whole of a BCID in one address.
 			Each address in the RAM contains the information of 16 SPPs.
 			Therefore, if a BCID contains greater than 16 SPPs its required to iterate over several addresses on the RAM and combine the data to form a complete set of SPPs.
 			Similarly, when writing more than 16 SPPs one must write the data incrementally to adjacent addresses.
@@ -71,7 +71,7 @@
 
 		\begin{itemize}
 			\item Bubble sort the SPP's by row ID.
-			\item Compare SPP row ID adjacent SPP's and compute if isolated. 
+			\item Compare SPP row ID to adjacent SPP's and compute if isolated. 
 		\end{itemize}
 
 		One of the major constraints of the data processing is the max number of SPP's that the Bubble sort can accept.
@@ -97,7 +97,7 @@
 		\end{figure}
 
 		By monitoring the bypass\textunderscore en signal, the EIF top level diagram can detect whether the Active Controller or Bypass Controller read and write signals need to be routed to the outputs.
-		This can be seen in Figure~\ref{fig:EIF_BLOCK} as the two slim grey rectangles as either side of the diagram.
+		This can be seen in Figure~\ref{fig:EIF_BLOCK} as the two slim grey rectangles at either side of the diagram.
 		When the bypass\textunderscore en signal is low, the Active Controller is linked with the RAMs.
 		The signals pass though the EIF top level entity without delay.
 		Conversely, when the bypass\textunderscore en signal is high, the Bypass Controller signals pass the the RAMs.
@@ -113,7 +113,7 @@
 		\end{figure}
 		
 		At the beginning of a swinging buffer cycle, the active control checks if the first BCID both has data and can fit into the data processing units.
-		Then, if the BCID is suitable for processing it is read into a data processor and a value of 0 is written to the Interface FIFO - the Active Controller moves to the next address.
+		Then, if the BCID is suitable for processing it is read into a data processor and a value of 0 is written to the Interface FIFO and the Active Controller moves to the next address.
 		If the number of SPPs is too large or if it is zero, the number of SPPs is written to the Interface FIFO, and again the Active Controller movies to the next address.
 
 		Once the Active Controller has finished with the final address and all data processors have had their output written to the MEP Interface RAMs, the bypass\textunderscore en signal is set high and the Active Controller waits until the next swinging buffer.
@@ -129,6 +129,9 @@
 				\caption{A diagram showing the structure of the Data Processor entity. }
 				\label{fig:data_processor_diagram}
 			\end{figure}
+
+			The data processor computes the sort algorithm, passes the sorted data to the flagging module and then outputs the data.
+			Not shown in Figure~\ref{fig:data_processor_diagram} for simplicity, the data processor uses validation signals to communicate with the active controller to ensure it is not passed data too early and that the data is outputted correctly after the process.
 
 			In addition to the SPPs being passed into the Data Processor, the BCID and number of SPPs must also be given.
 			The BCID is used later when writing the information to the MEP Interface RAM and the SPP count is used in the bubble sort process.
@@ -237,7 +240,7 @@
 		For each BCID that is bypassed, the time taken is only two cycles longer than the total time it would take to just read or write the data.
 		This is because one clock cycles is used to read in from the FIFO and identify that the BCID requires a bypass, and one clock cycle is used to move the data from the read-in register in the Bypass Controller to the write-out register.
 
-		At no point does the Bypass controller contain the hole information for one BCID.
+		At no point does the Bypass controller contain the whole information for one BCID.
 		This is because the read and write cycles happen synchronously.
 		The only possible scenario for a hole BCID to be contained in the Bypass Controller is for the BCID to contain less than 32 SPPs, however considering Figure~\ref{fig:sort_acceptance} it is highly likely that the sort acceptance will be much greater than this value.
 
@@ -286,7 +289,7 @@
 		Even though this scenario is very unlikely, the EIF must be able to process 1 RAM minimum in the worst case scenario to be viable for implementation.
 
 		The solution is to parallelise the data processors in the Active Controller.
-		If 16 data processors are used, the first data processor will finish before the 17th BCID is ready.
+		If 16 data processors are used, the first data processor will finish before the 17th BCID is ready for processing.
 		The process will therefore need 32 iterations of 5 clock cycles to read in all the data, 65 cycles to sort and flag the last BCID and 4 to read out.
 		This brings the total processing time for one RAM to,
 
@@ -295,6 +298,10 @@
 		\end{equation}  
 
 		In this case, 4 EIF modules could process 4 of the 16 RAMs each in 1044 clock cycles.
+
+		If the sort threshold is greater than 64, these numbers will be affected.
+		Its worth noting that as the FPGA development is still active, that the values and limits may change.
+		For this reason, one should make any solid conclusions from these calculations and instead view them at advisory.
 
 
 	\subsection{Conclusion and Current Stage of Development} % (fold)

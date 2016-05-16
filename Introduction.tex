@@ -7,7 +7,7 @@
     The advantage of FPGAs is the high data transfer rates and versatility they deliver, without the cost of manufacturing purpose built chips. 
     As such, FPGAs are used extensively in the development of new technology and small batch size production. \cite{fpga}
     \par
-    FPGAs are programmed in a variety of languages known as \underline{H}ardware \underline{D}escription \underline{L}anguages (HDLs).
+    FPGAs are programmed in a variety of codes known as \underline{H}ardware \underline{D}escription \underline{L}anguages (HDLs).
     One of the more common HDLs and the HDL used in this project is \underline{V}ery High Speed Integrated Circuit \underline{H}ardware \underline{D}escription \underline{L}anguages (VHDL).
     Programing a circuit in VHDL requires the creation of entities, sometimes refereed to as modules.
     These entities can be thought of as a \textit{`black boxes'} that compute logic on their inputs and thus form their outputs.
@@ -31,18 +31,18 @@
     \end{multline}
     % \vspace{0.5em}
     The standard model shown in equation \ref{eqn:std-mod}, is a quantum field theory that describes the fundamental particles and how they interact.
-    While this document does not require or attempt a detailed understanding of the intricate detail of the standard model,
-    the aim of many particle physics experiments is to verify, measure and expand the model.
+    The aim of this project and document is not to directly understand nor evaluate the standard model, instead to develop the technology used to verify, measure and expand it.
     Despite being the current best theory to explain particle interactions, the model is not complete.
     There are many un-described phenomena, such as the matter domination in the universe, that require physics beyond the standard model in order to be described.
     To that end, major international efforts, namely in the form of the Large Hadron Collider, aim to gain further knowledge and understanding of the underlying physics of the universe. \cite{ref:std}
 
   \subsection{The LHCb Experiment}
 
-    One experiment at the Large Hadron Collider is Large Hadron Collider beauty (LHCb).
-    Located at intersection point 8, LHCb is designed to study rare particle physics phenomena, such as lepton flavor violation and CP violation. 
+    One experiment at the Large Hadron Collider (LHC) is Large Hadron Collider beauty (LHCb).
+    Located at intersection point 8 of the LHC, LHCb is designed to study rare particle physics phenomena, such as lepton flavor violation and CP violation. 
     LCHb studies the decay modes of the B meson.
-    These hadrons travel on the order of $\mu m$s in the detector before decaying. 
+    B mesons are short lived particles with a lifetime of $\sim 1.5ps$.
+    Because of the time dilating effect of special relativity, these hadrons can travel up to a centimeter in the detector before decaying. 
     As such, B meson decays can be identified by decay products that propagate from a secondary vertex.
 
     \begin{figure}[h!]
@@ -134,6 +134,10 @@
         \label{fig:lli}
       \end{figure}
       Located on the DAQ FPGA is the \underline{L}ow \underline{L}evel \underline{I}nterface (LLI).
-      The LLI is responsible for sorting the incoming data into time order and packaging the data in the correct form for the computer systems and to optimise output bandwidth.
-      Other processes included in the LLI are descrambling and event isolation tagging.
-      These processes will be discussed in more detail later in this document.
+      The LLI is responsible for the construction of the data from the digital light signals from the optical links.
+      The scrambler is necessary for descrambling the incomming data, this is discussed in further detail later in this document.
+      The decoding block decodes the BCID of each SPP from gray code to binary.
+      Next, the router sorts the data into time order.
+      TFC or Time Fast Control processing is used to interface reset signals from the front end detector with the FPGA.
+      Isolated Clusters, also referred to as Event Isolations Flagging, identifies SPPs that fully describe a track though the detector - again, this is further discussed in this document.
+      Event ID and MEP building together build the processed data into computer compatible formats and allow the data to be matched to signals from other detectors in the experiment.

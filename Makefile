@@ -16,4 +16,4 @@ available:
 	mv Generated_Files/* .
 
 clean:
-	mv *.log *.aux *.xml *.bcf *.toc *.blg *.bbl Generated_Files/
+	mv *.log *.aux *.xml *.bcf *.toc *.blg *.bbl *.sty Generated_Files/

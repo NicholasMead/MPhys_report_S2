@@ -11,10 +11,11 @@
 }
 \date{\today}
 
-\usepackage[backend=biber,sorting=none]{biblatex}
-\addbibresource{Report_Main.bib}
+% \usepackage[backend=biber,sorting=none]{biblatex}
+% \addbibresource{Report_Main.bib}
 
 % ----- Packages ----- %
+
 \usepackage[left=1in,right=1in,bottom=1.25in,top=1in]{geometry}
 \usepackage{amsmath}
 \numberwithin{equation}{section}
@@ -41,6 +42,7 @@
 \usepackage[font=footnotesize,labelfont=bf]{caption} %figure captions
 \usepackage{sidecap} %side captions
 \sidecaptionvpos{figure}{c}
+\usepackage{setspace}
 
 % ----- Settings ----- %	
 \setlength{\parindent}{0em}
@@ -89,9 +91,10 @@
 	\addcontentsline{toc}{section}{References}
 	\printbibliography
 
-	% \newpage
-	% \appendix
-	% \section{Appendix}
-	% \input{Appendix}
+	\newpage
+	\appendix
+	\section{Statistical Derivations}
+	\label{stat_der}
+	\input{stat_derivation}
 
 \end{document}
