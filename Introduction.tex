@@ -127,12 +127,14 @@
       A GWT serialiser in the ASIC forms a 128 bit \textit{`frame'} comprising of a header (1010), four single bit parity flags and four SPPs.
       The parity flags indicate the parity of the four SPPs as a validation check for downstream processes.
       The data is then transmitted via an electrical to optical converter though optical fibers to the DAQ.
+      
       \begin{figure}[ht]
         \centering
         \includegraphics[width=\textwidth]{low_level_interface}
         \caption{A Diagram showing the data flow in the low level interface.}
         \label{fig:lli}
       \end{figure}
+      
       Located on the DAQ FPGA is the \underline{L}ow \underline{L}evel \underline{I}nterface (LLI).
       The LLI is responsible for the construction of the data from the digital light signals from the optical links.
       The scrambler is necessary for descrambling the incomming data, this is discussed in further detail later in this document.

@@ -32,12 +32,6 @@
 		\subsubsection{RAM Interfacing} % (fold)
 		\label{sub:ram_interfacing}
 			
-			\begin{figure}[ht]
-				\centering
-				\includegraphics[width=0.7\textwidth]{RAM_BLOCK}
-				\caption{A diagram showing the signals required for a simple RAM block.}
-				\label{fig:ram_diagram}
-			\end{figure}
 
 			Communicating with a RAM block, either to read (rd) or write (wr), requires the use of three signals.
 
@@ -60,6 +54,12 @@
 			In addition to the 16 SPP max read/write speed, each BCID has only 32 address.
 			Therefore a max of 512 SPPs can be stored in one BCID.
 
+			\begin{figure}[ht]
+				\centering
+				\includegraphics[width=0.7\textwidth]{RAM_BLOCK}
+				\caption{A diagram showing the signals required for a simple RAM block.}
+				\label{fig:ram_diagram}
+			\end{figure}
 		% subsection ram_interfacing (end)
 	
 	% subsection router_and_mep_interface (end)
@@ -183,7 +183,7 @@
 				\label{fig:dyn_stat_comp}
 			\end{figure}			
 
-			It is clear from Figure~\ref{fig:dyn_stat_comp} that the dynamic sort method does not significant reduce the sort time.
+			It is clear from Figure~\ref{fig:dyn_stat_comp} that the dynamic sort method does not significantly reduce the sort time.
 			For this reason, the decision has been made to implement a semi-static method.
 			This will reduce the resources usage of the EIF module, while not significantly increasing the time required to sort the data.
 
@@ -193,7 +193,7 @@
 			\label{sub:isolated_spp_tagging}
 			
 			Inside the Flagger entity shown in Figure~\ref{sub:data_processor}, the flagger compares each SPP in the BCID against the adjacent SPPs.
-			If the row ID of both adjacent SPPs is greater that 1 row different, the SPP is classed as isolated.
+			If the row ID of both adjacent SPPs is greater than 1 row different, the SPP is classed as isolated.
 			This is shown by setting the most significant bit of the SPP to 1.
 
 			In the special case that the SPP is at the edge of the ASIC chip, it is never flagged as isolated.
@@ -252,9 +252,9 @@
 		The Router is limited to writing 1 SPP per ram per clock cycle, meaning each ram can only ever contain 2048 SPPs at once.
 		This, although a worst case scenario, is an average of 64 per BCID.
 
-		Conciser a scenario where a a RAM contains 2048 SPPs, shared in 4 BCIDs of 512 each (The worst case bypass scenario). 
-		32 clock cycles would be used in flagging the BCIDs for Bypass and skipping (The 0 SPP BCIDs are still evaluated).
-		28 clock Cycles are then used skipping the empty BCID's.
+		Consider a scenario where a a RAM contains 2048 SPPs, shared in 4 BCIDs of 512 each (The worst case bypass scenario). 
+		32 clock cycles would be used in flagging the BCIDs for bypass and skipping (The 0 SPP BCIDs are still evaluated).
+		28 clock cycles are then used skipping the empty BCID's.
 		Each BCID of 512 SPP will require 34 clock cycles to bypass.
 
 		The total time taken is thus,
